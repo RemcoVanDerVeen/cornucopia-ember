@@ -1,0 +1,29 @@
+version: '3.7'
+
+x-env: &env
+  PORT: 4200
+  DATABASE_HOST: ember-db
+  DATABASE_USER: postgres
+  DATABASE_PASS: postgres
+
+services:
+  ember-db:
+    image: postgres:10.6-alpine
+    environment:
+      POSTGRES_DB: ccp-ember
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  app:
+    image: sergiolepore/ember-cli:3.1.4-node_10.1.0
+    volumes:
+      - .:/app/
+    ports:
+      - "4200:4200"
+      - "7020:7020"
+      - "7357:7357"
+    depends_on:
+      - ember-db
+    environment:
+      <<: *env
+      DATABASE_URL: ember-db://postgres@postgres/ember-web
